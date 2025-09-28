@@ -14,8 +14,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1342"
-            endingLineNumber = "1342"
+            startingLineNumber = "1343"
+            endingLineNumber = "1343"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1344"
-            endingLineNumber = "1344"
+            startingLineNumber = "1345"
+            endingLineNumber = "1345"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -46,22 +46,6 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1345"
-            endingLineNumber = "1345"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "530AE964-B591-48A5-9903-5AF680F0BBC6"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1346"
             endingLineNumber = "1346"
             landmarkName = "body"
@@ -71,7 +55,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "698D38C5-A9D6-4F05-BE17-EBC9DF6AC833"
+            uuid = "530AE964-B591-48A5-9903-5AF680F0BBC6"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -87,7 +71,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2BF2F4E7-4696-48AD-859E-623016F31C7D"
+            uuid = "698D38C5-A9D6-4F05-BE17-EBC9DF6AC833"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -103,6 +87,22 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "2BF2F4E7-4696-48AD-859E-623016F31C7D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1349"
+            endingLineNumber = "1349"
+            landmarkName = "ValidationScreen"
+            landmarkType = "14">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "81259D31-38E3-4F76-8F39-97BA1A4C227D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -110,8 +110,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1340"
-            endingLineNumber = "1340"
+            startingLineNumber = "1341"
+            endingLineNumber = "1341"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -126,8 +126,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1343"
-            endingLineNumber = "1343"
+            startingLineNumber = "1344"
+            endingLineNumber = "1344"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -142,8 +142,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "975"
-            endingLineNumber = "975"
+            startingLineNumber = "976"
+            endingLineNumber = "976"
             landmarkName = "Screen2Tab1"
             landmarkType = "14">
          </BreakpointContent>
@@ -158,8 +158,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "331"
-            endingLineNumber = "331"
+            startingLineNumber = "332"
+            endingLineNumber = "332"
             landmarkName = "performRequest(_:method:body:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -174,8 +174,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "355"
-            endingLineNumber = "355"
+            startingLineNumber = "356"
+            endingLineNumber = "356"
             landmarkName = "performVoidRequest(_:method:body:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -190,8 +190,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "382"
-            endingLineNumber = "382"
+            startingLineNumber = "383"
+            endingLineNumber = "383"
             landmarkName = "performRequest(_:method:body:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -206,8 +206,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "406"
-            endingLineNumber = "406"
+            startingLineNumber = "407"
+            endingLineNumber = "407"
             landmarkName = "performVoidRequest(_:method:body:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -222,8 +222,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "433"
-            endingLineNumber = "433"
+            startingLineNumber = "434"
+            endingLineNumber = "434"
             landmarkName = "performRequest(_:method:body:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -238,8 +238,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "457"
-            endingLineNumber = "457"
+            startingLineNumber = "458"
+            endingLineNumber = "458"
             landmarkName = "performVoidRequest(_:method:body:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -254,8 +254,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1338"
-            endingLineNumber = "1338"
+            startingLineNumber = "1339"
+            endingLineNumber = "1339"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -270,8 +270,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1336"
-            endingLineNumber = "1336"
+            startingLineNumber = "1337"
+            endingLineNumber = "1337"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -286,8 +286,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1331"
-            endingLineNumber = "1331"
+            startingLineNumber = "1332"
+            endingLineNumber = "1332"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -302,10 +302,68 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "287"
-            endingLineNumber = "287"
+            startingLineNumber = "288"
+            endingLineNumber = "288"
             landmarkName = "validateUser()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3CDDA774-624D-4290-A694-10BBD78919E2 - eebefe4fe3bade83"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for NewNavigationStructure.NetworkManager.validateUser() async throws -&gt; NewNavigationStructure.ApiTestUser"
+                  moduleName = "NewNavigationStructure.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Artem/Desktop/NewNavigationStructureRepo/NewNavigationStructure/NewNavigationStructure/NewNavigationStructure/NewNavigationStructureApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "287"
+                  endingLineNumber = "287">
+               </Location>
+               <Location
+                  uuid = "3CDDA774-624D-4290-A694-10BBD78919E2 - 3edb3d9303bbbc9f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(2) await resume partial function for NewNavigationStructure.NetworkManager.validateUser() async throws -&gt; NewNavigationStructure.ApiTestUser"
+                  moduleName = "NewNavigationStructure.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Artem/Desktop/NewNavigationStructureRepo/NewNavigationStructure/NewNavigationStructure/NewNavigationStructure/NewNavigationStructureApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "287"
+                  endingLineNumber = "287">
+               </Location>
+               <Location
+                  uuid = "3CDDA774-624D-4290-A694-10BBD78919E2 - b4d597103bc29285"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for NewNavigationStructure.NetworkManager.validateUser() async throws -&gt; NewNavigationStructure.ApiTestUser"
+                  moduleName = "NewNavigationStructure.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Artem/Desktop/NewNavigationStructureRepo/NewNavigationStructure/NewNavigationStructure/NewNavigationStructure/NewNavigationStructureApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "287"
+                  endingLineNumber = "287">
+               </Location>
+               <Location
+                  uuid = "3CDDA774-624D-4290-A694-10BBD78919E2 - 8e5d994617072886"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(6) suspend resume partial function for NewNavigationStructure.NetworkManager.validateUser() async throws -&gt; NewNavigationStructure.ApiTestUser"
+                  moduleName = "NewNavigationStructure.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Artem/Desktop/NewNavigationStructureRepo/NewNavigationStructure/NewNavigationStructure/NewNavigationStructure/NewNavigationStructureApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "287"
+                  endingLineNumber = "287">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -318,10 +376,68 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "288"
-            endingLineNumber = "288"
+            startingLineNumber = "289"
+            endingLineNumber = "289"
             landmarkName = "validateUser()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2CEAE796-B1D1-4910-A0EA-3614D024173A - b4d597103bc292a6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for NewNavigationStructure.NetworkManager.validateUser() async throws -&gt; NewNavigationStructure.ApiTestUser"
+                  moduleName = "NewNavigationStructure.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Artem/Desktop/NewNavigationStructureRepo/NewNavigationStructure/NewNavigationStructure/NewNavigationStructure/NewNavigationStructureApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "288"
+                  endingLineNumber = "288">
+               </Location>
+               <Location
+                  uuid = "2CEAE796-B1D1-4910-A0EA-3614D024173A - 66ec952bd240b0b2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(4) await resume partial function for NewNavigationStructure.NetworkManager.validateUser() async throws -&gt; NewNavigationStructure.ApiTestUser"
+                  moduleName = "NewNavigationStructure.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Artem/Desktop/NewNavigationStructureRepo/NewNavigationStructure/NewNavigationStructure/NewNavigationStructure/NewNavigationStructureApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "288"
+                  endingLineNumber = "288">
+               </Location>
+               <Location
+                  uuid = "2CEAE796-B1D1-4910-A0EA-3614D024173A - 5d684cd973eb56a4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for NewNavigationStructure.NetworkManager.validateUser() async throws -&gt; NewNavigationStructure.ApiTestUser"
+                  moduleName = "NewNavigationStructure.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Artem/Desktop/NewNavigationStructureRepo/NewNavigationStructure/NewNavigationStructure/NewNavigationStructure/NewNavigationStructureApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "288"
+                  endingLineNumber = "288">
+               </Location>
+               <Location
+                  uuid = "2CEAE796-B1D1-4910-A0EA-3614D024173A - fb8ee5a3cb330ada"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for NewNavigationStructure.NetworkManager.validateUser() async throws -&gt; NewNavigationStructure.ApiTestUser"
+                  moduleName = "NewNavigationStructure.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Artem/Desktop/NewNavigationStructureRepo/NewNavigationStructure/NewNavigationStructure/NewNavigationStructure/NewNavigationStructureApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "288"
+                  endingLineNumber = "288">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -334,8 +450,8 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1333"
-            endingLineNumber = "1333"
+            startingLineNumber = "1334"
+            endingLineNumber = "1334"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
@@ -350,10 +466,72 @@
             filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1334"
-            endingLineNumber = "1334"
+            startingLineNumber = "1335"
+            endingLineNumber = "1335"
             landmarkName = "body"
             landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CB367015-FC90-4BEE-8BD6-F530F333AC01"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "67"
+            endingLineNumber = "67"
+            landmarkName = "isUserLoggedIn()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BA9D3F84-74C6-4C27-A1D5-D841BA3E19E1"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "NewNavigationStructure/NewNavigationStructureApp.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "127"
+            endingLineNumber = "127"
+            landmarkName = "isUserLoggedIn()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BA9D3F84-74C6-4C27-A1D5-D841BA3E19E1 - 9fb02bab8bc04f32"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "NewNavigationStructure.UserDatabaseService.isUserLoggedIn() throws -&gt; Swift.Bool"
+                  moduleName = "NewNavigationStructure.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Artem/Desktop/NewNavigationStructureRepo/NewNavigationStructure/NewNavigationStructure/NewNavigationStructure/NewNavigationStructureApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126">
+               </Location>
+               <Location
+                  uuid = "BA9D3F84-74C6-4C27-A1D5-D841BA3E19E1 - 6deb6d39b003df5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (NewNavigationStructure.UserSession) -&gt; Swift.Bool in NewNavigationStructure.UserDatabaseService.isUserLoggedIn() throws -&gt; Swift.Bool"
+                  moduleName = "NewNavigationStructure.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Artem/Desktop/NewNavigationStructureRepo/NewNavigationStructure/NewNavigationStructure/NewNavigationStructure/NewNavigationStructureApp.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "126"
+                  endingLineNumber = "126">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
