@@ -6,7 +6,7 @@
 //
 //Version before AI included
 //import UIKit
-//Before AI supply
+//Before AI supply 
 import SwiftUI
 import CoreData
 
