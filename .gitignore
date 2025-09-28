@@ -3,6 +3,12 @@
 xcuserdata/
 *.xcuserstate
 
+xcuserdata/
+
+## Other
+*.moved-aside
+*.xcuserstate
+
 # Build generated
 build/
 DerivedData/
