@@ -4,8 +4,8 @@
 //
 //  Created by Artem on 21.02.2025.
 //
+//Version before AI included
 //import UIKit
-
 import SwiftUI
 import CoreData
 
