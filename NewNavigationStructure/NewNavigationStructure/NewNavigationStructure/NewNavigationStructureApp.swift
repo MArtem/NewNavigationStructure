@@ -292,7 +292,16 @@ class NetworkManager {
     
     // Остальные методы
     func login() async throws -> Bool {
-        try await performRequest(AuthNetworkService.self, endpoint: "/api/login", method: "POST")
+        let _: TokenResponse = try await performRequest(
+            AuthNetworkService.self,
+            endpoint: "/api/login",
+            method: "POST",
+            body: [
+                "email": "eve.holt@reqres.in",
+                "password": "cityslicka"
+            ]
+        )
+        return true
     }
     
     func logout() async throws {
@@ -621,7 +630,9 @@ class AuthRouter: AuthRouterProtocol {
     }
     
     func pop() {
-        path.removeLast()
+        if !path.isEmpty {
+            path.removeLast()
+        }
     }
     
     func navigateTo(_ route: AuthPath) {
@@ -792,7 +803,7 @@ class Tab3Router: Router {
 
 //3. Пути навигации
 
-enum AuthPath {
+enum AuthPath: Hashable {
     case login
     case validation
 }
@@ -933,7 +944,7 @@ struct Tab1View: View {
 struct Screen1Tab1: View {
     @ObservedObject var router: Tab1Router
     let coordinator: AppCoordinator
-    let model: Tab1ScreenModel
+    @ObservedObject var model: Tab1ScreenModel
     @State private var errorMessage: String?
     @State private var isLoading = false
     
@@ -1611,3 +1622,4 @@ extension URL {
         }
     }
 }
+
