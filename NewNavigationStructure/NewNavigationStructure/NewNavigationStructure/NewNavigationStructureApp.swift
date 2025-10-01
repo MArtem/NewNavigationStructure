@@ -156,24 +156,6 @@ struct Tab3View: View {
     }
 }
 
-struct DetailView<R: Router>: View where R.Path: Hashable {
-    let id: String
-    let router: R
-    
-    var body: some View {
-        VStack {
-            Text("Detail for ID: \(id)")
-            // Условно добавляем кнопку "Edit" только для Tab3Router
-            if router is Tab3Router {
-                Button("Edit") {
-                    (router as! Tab3Router).push(.screen2Edit(id)) // Приведение типа для Tab3
-                }
-            }
-            Button("Back") { router.pop() }
-        }
-    }
-}
-
 struct EditView: View {
     let id: String
     let router: Tab3Router
@@ -366,15 +348,13 @@ extension EnvironmentValues {
 // Main App
 @main
 struct NavigationApp: App {
-    let persistenceController = PersistenceController.shared
     private let storeManager: StoreManager // Делаем let, так как больше не меняем
     let networkManager: NetworkManager
     @StateObject private var coordinator: AppCoordinator // Объявляем без немедленной инициализации
     
     init() {
-        let context = persistenceController.container.viewContext
-        let userDatabaseService = UserDatabaseService(context: context)
-        let contentDatabaseService = ContentDatabaseService(context: context)
+        let userDatabaseService = UserDatabaseService(context: PersistenceController.shared.container.viewContext)
+        let contentDatabaseService = ContentDatabaseService(context: PersistenceController.shared.container.viewContext)
         let tempStoreManager = StoreManager(userService: userDatabaseService, contentService: contentDatabaseService)
         self.storeManager = tempStoreManager
         self.networkManager = NetworkManager()
@@ -425,14 +405,14 @@ struct NavigationRootView: View {
                     router: coordinator.authRouter,
                     storeManager: storeManager,
                     networkManager: networkManager,
-                                    onAuthSuccess: {
-                    do {
-                        try storeManager.saveLoginState(true, userId: 1) // Пример userId
-                        coordinator.isAuthenticated = true
-                    } catch {
-                        // Handle error silently
+                    onAuthSuccess: {
+                        do {
+                            try storeManager.saveLoginState(true, userId: 1) // Пример userId
+                            coordinator.isAuthenticated = true
+                        } catch {
+                            // Handle error silently
+                        }
                     }
-                }
                 )
             }
         }
@@ -446,25 +426,7 @@ struct NavigationRootView: View {
     }
 }
 
-// MARK: - Core Data Persistence
-struct PersistenceController {
-    static let shared = PersistenceController()
-    
-    let container: NSPersistentContainer
-    
-    init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "NavigationAppModel")
-        if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
-        }
-        container.loadPersistentStores { _, error in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        }
-    }
-}
-
 /////////////
 // Deep linking moved to DeepLinking.swift
+
 

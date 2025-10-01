@@ -15,20 +15,19 @@ final class AppCoordinator: ObservableObject {
         self.urlManager = urlManager
     }
     
-    func navigateToTabScreen<T>(tab: Int, path: [T], selectedTabBinding: Binding<Int>? = nil) {
-        switch tab {
-        case 0:
-            tab1Router.path = path as! [Tab1Path]
-            if let binding = selectedTabBinding { binding.wrappedValue = 0 } else { selectedTab = 0 }
-        case 1:
-            tab2Router.path = path as! [Tab2Path]
-            if let binding = selectedTabBinding { binding.wrappedValue = 1 } else { selectedTab = 1 }
-        case 2:
-            tab3Router.path = path as! [Tab3Path]
-            if let binding = selectedTabBinding { binding.wrappedValue = 2 } else { selectedTab = 2 }
-        default:
-            break
-        }
+    func navigateToTabScreen(tab: Int, path: [Tab1Path], selectedTabBinding: Binding<Int>? = nil) {
+        tab1Router.path = path
+        if let binding = selectedTabBinding { binding.wrappedValue = 0 } else { selectedTab = 0 }
+    }
+
+    func navigateToTabScreen(tab: Int, path: [Tab2Path], selectedTabBinding: Binding<Int>? = nil) {
+        tab2Router.path = path
+        if let binding = selectedTabBinding { binding.wrappedValue = 1 } else { selectedTab = 1 }
+    }
+
+    func navigateToTabScreen(tab: Int, path: [Tab3Path], selectedTabBinding: Binding<Int>? = nil) {
+        tab3Router.path = path
+        if let binding = selectedTabBinding { binding.wrappedValue = 2 } else { selectedTab = 2 }
     }
 }
 

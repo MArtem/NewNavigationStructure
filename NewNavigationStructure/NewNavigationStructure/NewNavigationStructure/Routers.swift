@@ -181,6 +181,14 @@ final class Tab3Router: Router {
     }
 }
 
+protocol EditableDetailRouter: Router where Path == Tab3Path {
+    func pushEdit(_ id: String)
+}
+
+extension Tab3Router: EditableDetailRouter {
+    func pushEdit(_ id: String) { push(.screen2Edit(id)) }
+}
+
 // MARK: - Paths
 
 enum AuthPath: Hashable {
