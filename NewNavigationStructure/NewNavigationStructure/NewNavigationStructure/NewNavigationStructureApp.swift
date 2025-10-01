@@ -12,299 +12,12 @@ import CoreData
 
 // Moved to Store.swift, Models.swift, and Network.swift (errors, store, models, network services)
 
-// MARK: - Модели экранов
-class Tab1ScreenModel: ObservableObject {
-    let networkManager: NetworkManager
-    let storeManager: StoreManager
-    @Published var customers: [ApiCustomers] = []
-    @Published var errorMessage: String?
-    
-    init(networkManager: NetworkManager, storeManager: StoreManager) {
-        self.networkManager = networkManager
-        self.storeManager = storeManager
-    }
-    
-    func loadCustomers() async {
-        do {
-            // Проверяем подключение к интернету (заглушка пока)
-            if NetworkReachability.isConnected() {
-                let fetchedCustomers = try await networkManager.fetchCustomers()
-                try storeManager.saveCustomers(fetchedCustomers)
-                await MainActor.run {
-                    customers = fetchedCustomers
-                    errorMessage = nil
-                }
-            } else {
-                // Если нет интернета, берём из БД
-                let dbCustomers = try storeManager.fetchCustomers()
-                await MainActor.run {
-                    customers = dbCustomers
-                    errorMessage = nil
-                }
-            }
-        } catch {
-            await MainActor.run {
-                errorMessage = error.localizedDescription
-                // Пробуем загрузить из БД при ошибке
-                do {
-                    customers = try storeManager.fetchCustomers()
-                } catch {
-                    errorMessage = "Failed to load from API and DB: \(error.localizedDescription)"
-                    customers = []
-                }
-            }
-        }
-    }
-}
-
-// Временная заглушка для проверки сети
-struct NetworkReachability {
-    static func isConnected() -> Bool {
-        // Реальная проверка позже
-        return true
-    }
-}
-
-class Tab2ScreenModel: ObservableObject {
-    let networkManager: NetworkManager
-    let storeManager: StoreManager
-    
-    init(networkManager: NetworkManager, storeManager: StoreManager) {
-        self.networkManager = networkManager
-        self.storeManager = storeManager
-    }
-}
-
-class Tab3ScreenModel: ObservableObject {
-    let networkManager: NetworkManager
-    let storeManager: StoreManager
-    
-    init(networkManager: NetworkManager, storeManager: StoreManager) {
-        self.networkManager = networkManager
-        self.storeManager = storeManager
-    }
-}
-
-class ScreenModel: ObservableObject {
-    let networkManager: NetworkManager
-    let storeManager: StoreManager
-    
-    init(networkManager: NetworkManager, storeManager: StoreManager) {
-        self.networkManager = networkManager
-        self.storeManager = storeManager
-    }
-}
 //2. Роутеры как протоколы
-
-struct AuthModule: View {
-    @ObservedObject var router: AuthRouter // Изменяем на @ObservedObject
-    let storeManager: StoreManager
-    let networkManager: NetworkManager
-    let onAuthSuccess: () -> Void
-    
-    var body: some View {
-        NavigationStack(path: $router.path) {
-            LoginScreen(router: router, storeManager: storeManager)
-                .navigationDestination(for: AuthPath.self) { path in
-                    switch path {
-                    case .login:
-                        LoginScreen(router: router, storeManager: storeManager)
-                    case .validation:
-                        ValidationScreen(
-                            router: router,
-                            model: ScreenModel(networkManager: networkManager, storeManager: storeManager),
-                            onSuccess: onAuthSuccess
-                        )
-                    }
-                }
-        }
-    }
-}
-
-struct MainModule: View {
-    let storeManager: StoreManager
-    let networkManager: NetworkManager
-    let coordinator: AppCoordinator
-    
-    init(storeManager: StoreManager, networkManager: NetworkManager, coordinator: AppCoordinator) {
-        self.storeManager = storeManager
-        self.networkManager = networkManager
-        self.coordinator = coordinator
-    }
-    
-    var body: some View {
-        MainTabView(
-            storeManager: storeManager,
-            networkManager: networkManager,
-            coordinator: coordinator
-        )
-
-    }
-}
 
 // Routers and Paths moved to Routers.swift
 
 // AppCoordinator moved to Coordinator.swift
 
-// MARK: - Модули для табов
-
-struct DetailContentView: View {
-    let customer: ApiCustomers
-        
-    var body: some View {
-        VStack(alignment: .leading) {
-            AsyncImage(url: URL(string: customer.avatar_url)) { image in
-                image
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 200, height: 200) // Большой аватар
-                    .clipShape(Circle())
-                    .padding(.bottom, 20)
-            } placeholder: {
-                ProgressView()
-                    .frame(width: 200, height: 200)
-            }
-            Text("ID: \(customer.id)")
-            Text("Login: \(customer.login)")
-            Text("HTML URL: \(customer.html_url)")
-            Text("Avatar URL: \(customer.avatar_url)")
-            Spacer()
-        }
-        .navigationTitle("Customer Details")
-        .padding()
-    }
-}
-
-// MARK: - Модуль Tab 1
-struct Tab1Module {
-    let router: Tab1Router
-    let coordinator: AppCoordinator
-    let model: Tab1ScreenModel
-    
-    func makeView() -> some View {
-        Tab1View(router: router, coordinator: coordinator, model: model)
-    }
-}
-
-struct Tab1View: View {
-    @ObservedObject var router: Tab1Router
-    let coordinator: AppCoordinator
-    @ObservedObject var model: Tab1ScreenModel // Обновляем на @ObservedObject
-    
-    var body: some View {
-        NavigationStack(path: $router.path) {
-            Screen1Tab1(router: router, coordinator: coordinator, model: model)
-                .navigationDestination(for: Tab1Path.self) { path in
-                    switch path {
-                    case .screen1:
-                        Screen1Tab1(router: router, coordinator: coordinator, model: model)
-                    case .screen2:
-                        Screen2Tab1(router: router, coordinator: coordinator, model: model)
-                    case .detail(let customer):
-                        DetailContentView(customer: customer)
-                    }
-                }
-        }
-        .onChange(of: router.path) { _, newPath in
-            if newPath == [.screen1] {
-                router.path = [] // Сбрасываем path до [], если остался только .screen1
-            }
-        }
-    }
-}
-
-struct Screen1Tab1: View {
-    @ObservedObject var router: Tab1Router
-    let coordinator: AppCoordinator
-    @ObservedObject var model: Tab1ScreenModel
-    @State private var errorMessage: String?
-    @State private var isLoading = false
-    
-    var body: some View {
-        VStack {
-            Text("Tab 1 - Screen 1")
-            if isLoading {
-                ProgressView()
-            } else {
-                Button("Next") { router.push(.screen2) }
-                Button("Back") { router.pop() }.disabled(router.path.isEmpty)
-                Button("To Screen 1") { router.navigateTo(.screen1) }
-                Button("To Screen 2") { router.navigateTo(.screen2) }
-                Button("Logout") {
-                    Task {
-                        isLoading = true
-                        do {
-                            if let userId = try model.storeManager.getCurrentUserId() {
-                                try model.storeManager.saveLoginState(false, userId: userId)
-                            }
-                        } catch {
-                            errorMessage = (error as? AppError)?.localizedDescription
-                        }
-                        isLoading = false
-                    }
-                }
-                if let errorMessage = errorMessage {
-                    Text(errorMessage).foregroundColor(.red)
-                }
-            }
-        }
-
-        .navigationBarBackButtonHidden(router.path.isEmpty) // Скрываем кнопку "Назад" при path = []
-    }
-}
-
-struct Screen2Tab1: View {
-    @ObservedObject var router: Tab1Router
-    let coordinator: AppCoordinator
-    @ObservedObject var model: Tab1ScreenModel // Теперь наблюдаем модель
-    @State private var isLoading = false
-    
-    var body: some View {
-        VStack {
-            if isLoading {
-                ProgressView()
-            } else if let errorMessage = model.errorMessage {
-                Text(errorMessage).foregroundColor(.red)
-            } else {
-                Text("Tab 1 - Screen 2")
-                Button("Back") { router.pop() }
-                Button("To Screen 1") { router.navigateTo(.screen1) }
-                Button("To Screen 2") { router.navigateTo(.screen2) }
-                List(model.customers) { customer in
-                    HStack {
-                        AsyncImage(url: URL(string: customer.avatar_url)) { image in
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 40, height: 40) // Маленький аватар
-                                .clipShape(Circle())
-                        } placeholder: {
-                            ProgressView()
-                                .frame(width: 40, height: 40)
-                        }
-                        VStack(alignment: .leading) {
-                            Text("ID: \(customer.id)")
-                            Text("Login: \(customer.login)")
-                            Text("HTML URL: \(customer.html_url)")
-                            Text("Avatar URL: \(customer.avatar_url)")
-                        }
-                    }
-                    .onTapGesture {
-                        router.push(.detail(customer))
-                    }
-                }
-            }
-        }
-        .navigationTitle("Customers")
-        .onAppear {
-            Task {
-                isLoading = true
-                await model.loadCustomers()
-                isLoading = false
-            }
-        }
-    }
-}
 
 // MARK: - Модуль Tab 2
 struct Tab2Module {
@@ -580,58 +293,29 @@ struct Screen4Tab3: View {
         }
     }
 }
-//6. Экраны авторизации
 
-struct LoginScreen: View {
-    @ObservedObject var router: AuthRouter
+struct MainModule: View {
     let storeManager: StoreManager
+    let networkManager: NetworkManager
+    let coordinator: AppCoordinator
+    
+    init(storeManager: StoreManager, networkManager: NetworkManager, coordinator: AppCoordinator) {
+        self.storeManager = storeManager
+        self.networkManager = networkManager
+        self.coordinator = coordinator
+    }
     
     var body: some View {
-        VStack {
-            Text("Login Screen")
-            Button("Login") {
-                router.push(.validation)
-            }
-        }
+        MainTabView(
+            storeManager: storeManager,
+            networkManager: networkManager,
+            coordinator: coordinator
+        )
+
     }
 }
 
-struct ValidationScreen: View {
-    @ObservedObject var router: AuthRouter
-    let model: ScreenModel
-    let onSuccess: () -> Void
-    @State private var errorMessage: String?
-    @State private var isLoading = false
-    
-    var body: some View {
-        VStack {
-            Text("Validation Screen")
-            if isLoading {
-                ProgressView()
-            } else {
-                Button("OK") {
-                    Task {
-                        isLoading = true
-                        do {
-                            //let user = try await model.networkManager.validateUser()
-                            let user = ApiTestUser(id: 777, userId: 555, title: "test", body: "rrr")
-                            try model.storeManager.saveUser(user)
-                            try model.storeManager.saveLoginState(true, userId: user.userId) // Сохраняем сессию с userId
-                            router.path = []
-                            onSuccess()
-                        } catch {
-                            errorMessage = (error as? AppError)?.localizedDescription ?? error.localizedDescription
-                        }
-                        isLoading = false
-                    }
-                }
-            }
-            if let errorMessage = errorMessage {
-                Text(errorMessage).foregroundColor(.red)
-            }
-        }
-    }
-}
+
 //7. Главная точка входа
 
 struct MainTabView: View {
@@ -783,3 +467,4 @@ struct PersistenceController {
 
 /////////////
 // Deep linking moved to DeepLinking.swift
+
