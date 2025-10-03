@@ -155,6 +155,14 @@ struct Screen4Tab3: View {
                     Button("Tab 3 - Screen 3") { router.navigateTo(.screen3) }
                     Button("Tab 3 - Screen 4") { router.navigateTo(.screen4) }
                 }
+                Section(header: Text("Tab 4")) {
+                    Button("Tab 4 - Root") {
+                        coordinator.navigateToTabScreen(tab: 3, path: [] as [Tab4Path], selectedTabBinding: selectedTab)
+                    }
+                    Button("Tab 4 - Details 42") {
+                        coordinator.navigateToTabScreen(tab: 3, path: [.details(id: 42)], selectedTabBinding: selectedTab)
+                    }
+                }
             }
         }
     }

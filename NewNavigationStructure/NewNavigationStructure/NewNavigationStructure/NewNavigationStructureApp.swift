@@ -68,6 +68,10 @@ struct MainTabView: View {
                 .makeView()
                 .tabItem { Label("Tab 3", systemImage: "3.circle") }
                 .tag(2)
+            Tab4Module(router: coordinator.tab4Router, coordinator: coordinator, model: ScreenModel(networkManager: networkManager, storeManager: storeManager))
+                .makeView()
+                .tabItem { Label("Tab 4", systemImage: "4.circle") }
+                .tag(3)
         }
         .environment(\.selectedTab, $coordinator.selectedTab)
 
@@ -171,6 +175,7 @@ struct NavigationRootView: View {
 
 /////////////
 // Deep linking moved to DeepLinking.swift
+
 
 
 
