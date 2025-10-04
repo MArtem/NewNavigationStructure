@@ -43,6 +43,24 @@ struct Tab3View: View {
         .onChange(of: router.path) { _, newPath in
             if newPath == [.screen1] { router.path = [] }
         }
+        .sheet(item: $router.modal) { modal in
+            switch modal {
+            case .createItem:
+                CreateItemModalView(router: router)
+            case .filter:
+                // Not used as sheet; use fullScreenCover instead
+                EmptyView()
+            }
+        }
+        .fullScreenCover(item: $router.fullScreen) { modal in
+            switch modal {
+            case .filter:
+                FilterFullScreenView(router: router)
+            case .createItem:
+                // Not used as full screen; presented as sheet
+                EmptyView()
+            }
+        }
     }
 }
 
@@ -163,6 +181,18 @@ struct Screen4Tab3: View {
                     Button("К Screen 5") { goToTab3(.screen5) }
                     Button("К Screen 6") { goToTab3(.screen6) }
                 }
+                Section(header: Text("Модальные")) {
+                    Button("Открыть CreateItem (sheet)") {
+                        router.present(.createItem)
+                    }
+                    Button("Открыть Filter (fullScreen)") {
+                        router.presentFullScreen(.filter)
+                    }
+                    Button("Закрыть модалку") {
+                        router.dismissModal()
+                        router.dismissFullScreen()
+                    }
+                }
                 Section(header: Text("Tab 4")) {
                     Button("Tab 4 - Root") {
                         coordinator.navigateToTabScreen(tab: 3, path: [] as [Tab4Path], selectedTabBinding: selectedTab)
@@ -213,5 +243,57 @@ struct Screen6Tab3: View {
             Button("To Screen 6") { router.navigateTo(.screen6) }
         }
         .navigationTitle("Screen 6")
+    }
+}
+
+struct CreateItemModalView: View {
+    @ObservedObject var router: Tab3Router
+    @State private var name: String = ""
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section(header: Text("Создание элемента")) {
+                    TextField("Название", text: $name)
+                }
+                Section {
+                    Button("Сохранить и закрыть") {
+                        // Здесь могла бы быть логика сохранения
+                        router.dismissModal()
+                    }
+                    Button("Отмена") {
+                        router.dismissModal()
+                    }
+                }
+            }
+            .navigationTitle("Create Item")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Закрыть") { router.dismissModal() }
+                }
+            }
+        }
+    }
+}
+
+struct FilterFullScreenView: View {
+    @ObservedObject var router: Tab3Router
+    @State private var isEnabled: Bool = false
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Toggle("Фильтр активен", isOn: $isEnabled)
+                    .padding(.horizontal)
+                Button("Применить") {
+                    // Применить фильтр
+                    router.dismissFullScreen()
+                }
+                Button("Закрыть") {
+                    router.dismissFullScreen()
+                }
+            }
+            .navigationTitle("Filter")
+        }
     }
 }

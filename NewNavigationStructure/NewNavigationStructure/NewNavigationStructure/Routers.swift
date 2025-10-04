@@ -131,6 +131,8 @@ final class Tab2Router: Router {
 
 final class Tab3Router: Router {
     @Published var path: [Tab3Path] = []
+    @Published var modal: Tab3Modal?
+    @Published var fullScreen: Tab3Modal?
 
     func push(_ route: Tab3Path) {
         path.append(route)
@@ -162,6 +164,12 @@ final class Tab3Router: Router {
             path = buildPath(to: route)
         }
     }
+
+    // MARK: - Modal helpers
+    func present(_ modal: Tab3Modal) { self.modal = modal }
+    func presentFullScreen(_ modal: Tab3Modal) { self.fullScreen = modal }
+    func dismissModal() { self.modal = nil }
+    func dismissFullScreen() { self.fullScreen = nil }
 
     private func buildPath(to route: Tab3Path) -> [Tab3Path] {
         switch route {
@@ -211,6 +219,18 @@ enum Tab2Path: Hashable {
     case screen2
     case screen2Detail(String)
     case screen3
+}
+
+enum Tab3Modal: Identifiable, Hashable {
+    case createItem
+    case filter
+
+    var id: String {
+        switch self {
+        case .createItem: return "createItem"
+        case .filter: return "filter"
+        }
+    }
 }
 
 enum Tab3Path: Hashable {
