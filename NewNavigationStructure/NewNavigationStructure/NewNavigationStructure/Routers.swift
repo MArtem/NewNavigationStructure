@@ -177,6 +177,10 @@ final class Tab3Router: Router {
             return [.screen1, .screen2, .screen3]
         case .screen4:
             return [.screen1, .screen2, .screen3, .screen4]
+        case .screen5:
+            return [.screen1, .screen2, .screen3, .screen4, .screen5]
+        case .screen6:
+            return [.screen1, .screen2, .screen3, .screen4, .screen5, .screen6]
         }
     }
 }
@@ -216,4 +220,6 @@ enum Tab3Path: Hashable {
     case screen2Edit(String)
     case screen3
     case screen4
+    case screen5
+    case screen6
 }

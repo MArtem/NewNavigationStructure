@@ -33,6 +33,10 @@ struct Tab3View: View {
                             Screen3Tab3(router: router, coordinator: coordinator, model: model)
                         case .screen4:
                             Screen4Tab3(router: router, coordinator: coordinator, model: model)
+                        case .screen5:
+                            Screen5Tab3(router: router, coordinator: coordinator, model: model)
+                        case .screen6:
+                            Screen6Tab3(router: router, coordinator: coordinator, model: model)
                         }
                 }
         }
@@ -155,6 +159,10 @@ struct Screen4Tab3: View {
                     Button("Tab 3 - Screen 3") { router.navigateTo(.screen3) }
                     Button("Tab 3 - Screen 4") { router.navigateTo(.screen4) }
                 }
+                Section(header: Text("Tab 3 — Дополнительные экраны")) {
+                    Button("К Screen 5") { goToTab3(.screen5) }
+                    Button("К Screen 6") { goToTab3(.screen6) }
+                }
                 Section(header: Text("Tab 4")) {
                     Button("Tab 4 - Root") {
                         coordinator.navigateToTabScreen(tab: 3, path: [] as [Tab4Path], selectedTabBinding: selectedTab)
@@ -165,5 +173,45 @@ struct Screen4Tab3: View {
                 }
             }
         }
+    }
+    
+    private func goToTab3(_ destination: Tab3Path) {
+        router.navigateTo(destination)
+    }
+}
+
+struct Screen5Tab3: View {
+    @ObservedObject var router: Tab3Router
+    let coordinator: AppCoordinator
+    let model: Tab3ScreenModel
+
+    var body: some View {
+        VStack {
+            Text("Tab 3 - Screen 5")
+            Button("Next → Screen 6") { router.push(.screen6) }
+            Button("Back") { router.pop() }
+            Button("To Screen 4") { router.navigateTo(.screen4) }
+            Button("To Screen 5") { router.navigateTo(.screen5) }
+            Button("To Screen 6") { router.navigateTo(.screen6) }
+        }
+        .navigationTitle("Screen 5")
+    }
+}
+
+struct Screen6Tab3: View {
+    @ObservedObject var router: Tab3Router
+    let coordinator: AppCoordinator
+    let model: Tab3ScreenModel
+
+    var body: some View {
+        VStack {
+            Text("Tab 3 - Screen 6")
+            Button("Back") { router.pop() }
+            Button("← Go to Screen 5") { router.push(.screen5) }
+            Button("To Screen 4") { router.navigateTo(.screen4) }
+            Button("To Screen 5") { router.navigateTo(.screen5) }
+            Button("To Screen 6") { router.navigateTo(.screen6) }
+        }
+        .navigationTitle("Screen 6")
     }
 }
