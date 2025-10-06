@@ -105,4 +105,25 @@ struct NewNavigationStructureTests {
         await MainActor.run { NotificationCenter.default.post(name: .routerDidLogout, object: nil) }
         #expect(router.path.isEmpty)
     }
+
+    @Test("Tab1Router decodes detail token without resolver as fallback to screen2")
+    func tab1RouterDetailFallbackWithoutResolver() async throws {
+        clearAllRouterKeys()
+
+        // Manually craft Codable JSON for Tab1RouteToken array: [screen1, screen2, detail(id: "CUST1")]
+        let jsonArray: [[String: Any]] = [
+            ["screen1": [:]],
+            ["screen2": [:]],
+            ["detail": ["id": "CUST1"]]
+        ]
+        let data = try #require(JSONSerialization.data(withJSONObject: jsonArray))
+        UserDefaults.standard.set(data, forKey: tab1Key)
+
+        // Without resolver, router should fallback detail to .screen2
+        let router = Tab1Router()
+        #expect(router.path.count == 3)
+        #expect(router.path[0] == .screen1)
+        #expect(router.path[1] == .screen2)
+        #expect(router.path[2] == .screen2)
+    }
 }
