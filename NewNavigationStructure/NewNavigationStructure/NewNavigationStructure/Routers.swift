@@ -45,6 +45,7 @@ final class AuthRouter: Router {
             self.path = decode(tokens)
         } else if let legacy = RouteStorage.loadLegacyStrings(forKey: storageKey) {
             self.path = legacyDecode(legacy)
+            RouteStorage.saveEncodable(encode(self.path), forKey: storageKey)
         }
     }
 
@@ -124,6 +125,7 @@ final class Tab1Router: Router {
             self.path = decode(tokens)
         } else if let legacy = RouteStorage.loadLegacyStrings(forKey: storageKey) {
             self.path = legacyDecode(legacy)
+            RouteStorage.saveEncodable(encode(self.path), forKey: storageKey)
         }
     }
 
@@ -233,6 +235,7 @@ final class Tab2Router: Router {
             self.path = decode(tokens)
         } else if let legacy = RouteStorage.loadLegacyStrings(forKey: storageKey) {
             self.path = legacyDecode(legacy)
+            RouteStorage.saveEncodable(encode(self.path), forKey: storageKey)
         }
     }
 
@@ -360,16 +363,19 @@ final class Tab3Router: Router {
             self.path = decode(tokens)
         } else if let legacy = RouteStorage.loadLegacyStrings(forKey: pathKey) {
             self.path = legacyDecode(legacy)
+            RouteStorage.saveEncodable(encode(self.path), forKey: pathKey)
         }
         if let token = RouteStorage.loadDecodable(Tab3ModalToken.self, forKey: modalKey), let m = decodeModal(token) {
             self.modal = m
         } else if let legacy = RouteStorage.loadLegacyStrings(forKey: modalKey)?.first, let m = legacyDecodeModal(legacy) {
             self.modal = m
+            RouteStorage.saveEncodable(encode(m), forKey: modalKey)
         }
         if let token = RouteStorage.loadDecodable(Tab3ModalToken.self, forKey: fullScreenKey), let fs = decodeModal(token) {
             self.fullScreen = fs
         } else if let legacy = RouteStorage.loadLegacyStrings(forKey: fullScreenKey)?.first, let fs = legacyDecodeModal(legacy) {
             self.fullScreen = fs
+            RouteStorage.saveEncodable(encode(fs), forKey: fullScreenKey)
         }
     }
 
@@ -579,4 +585,3 @@ enum Tab3Path: Hashable {
     case screen5
     case screen6
 }
-
