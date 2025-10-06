@@ -127,8 +127,7 @@ struct Screen3Tab3: View {
             Button("Back") { router.pop() }
             Button("Go to deeplink") {
                 if let testUrl = URL(string: "myapp://tab2/screen2detail?id=123") {
-                    if coordinator.urlManager.handleURL(testUrl, coordinator: coordinator) {
-                    }
+                    _ = coordinator.handle(testUrl, selectedTabBinding: nil)
                 }
             }
             Button("To Screen 1") { router.navigateTo(.screen1) }
@@ -199,6 +198,18 @@ struct Screen4Tab3: View {
                     }
                     Button("Tab 4 - Details 42") {
                         coordinator.navigateToTabScreen(tab: 3, path: [.details(id: 42)], selectedTabBinding: selectedTab)
+                    }
+                }
+                Section(header: Text("Deep Links")) {
+                    Button("Открыть диплинк: Tab4 → Root") {
+                        if let url = URL(string: "myapp://tab4/root") {
+                            _ = coordinator.handle(url, selectedTabBinding: selectedTab)
+                        }
+                    }
+                    Button("Открыть диплинк: Tab2 → Screen2Detail(ABC)") {
+                        if let url = URL(string: "myapp://tab2/screen2detail?id=ABC") {
+                            _ = coordinator.handle(url, selectedTabBinding: selectedTab)
+                        }
                     }
                 }
             }
@@ -297,3 +308,4 @@ struct FilterFullScreenView: View {
         }
     }
 }
+
