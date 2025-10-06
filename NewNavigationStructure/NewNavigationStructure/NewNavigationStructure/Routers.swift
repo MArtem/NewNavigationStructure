@@ -1,4 +1,5 @@
 import SwiftUI
+import OSLog
 
 // Lightweight storage for route tokens
 private enum RouteStorage {
@@ -25,6 +26,26 @@ private enum RouteStorage {
     }
 }
 
+// Unified storage keys for routers
+private enum RouterStorageKey {
+    static let authPath = "router.auth.path"
+    static let tab1Path = "router.tab1.path"
+    static let tab2Path = "router.tab2.path"
+    static let tab3Path = "router.tab3.path"
+    static let tab3Modal = "router.tab3.modal"
+    static let tab3FullScreen = "router.tab3.fullscreen"
+}
+
+// Centralized logger for router-related events
+private enum RouterLog {
+    static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "Routers", category: "Navigation")
+}
+
+// Logout broadcast
+extension Notification.Name {
+    static let routerDidLogout = Notification.Name("router.didLogout")
+}
+
 protocol Router: ObservableObject {
     associatedtype Path: Hashable
     var path: [Path] { get set }
@@ -36,16 +57,16 @@ protocol Router: ObservableObject {
 
 final class AuthRouter: Router {
     @Published var path: [AuthPath] = [] {
-        didSet { RouteStorage.saveEncodable(encode(path), forKey: storageKey) }
+        didSet { RouteStorage.saveEncodable(encode(path), forKey: RouterStorageKey.authPath) }
     }
-    private let storageKey = "router.auth.path"
 
     init() {
-        if let tokens = RouteStorage.loadDecodable([AuthRouteToken].self, forKey: storageKey) {
+        if let tokens = RouteStorage.loadDecodable([AuthRouteToken].self, forKey: RouterStorageKey.authPath) {
             self.path = decode(tokens)
-        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: storageKey) {
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: RouterStorageKey.authPath) {
             self.path = legacyDecode(legacy)
-            RouteStorage.saveEncodable(encode(self.path), forKey: storageKey)
+            RouteStorage.saveEncodable(encode(self.path), forKey: RouterStorageKey.authPath)
+            RouterLog.logger.info("Migrated legacy auth path to Codable format")
         }
     }
 
@@ -63,7 +84,8 @@ final class AuthRouter: Router {
         if let index = path.firstIndex(of: route) {
             path = Array(path[...index])
         } else if route == .login {
-            path = []
+            clearPersistence()
+            NotificationCenter.default.post(name: .routerDidLogout, object: nil)
         }
     }
 
@@ -102,7 +124,7 @@ final class AuthRouter: Router {
     }
 
     func clearPersistence() {
-        RouteStorage.clear(forKey: storageKey)
+        RouteStorage.clear(forKey: RouterStorageKey.authPath)
         self.path = []
     }
 }
@@ -115,17 +137,28 @@ final class Tab1Router: Router {
     static var detailIDExtractor: ((ApiCustomers) -> String)?
     static var detailResolver: ((String) -> ApiCustomers)?
 
+    private var logoutObserver: Any?
+
     @Published var path: [Tab1Path] = [] {
-        didSet { RouteStorage.saveEncodable(encode(path), forKey: storageKey) }
+        didSet { RouteStorage.saveEncodable(encode(path), forKey: RouterStorageKey.tab1Path) }
     }
-    private let storageKey = "router.tab1.path"
 
     init() {
-        if let tokens = RouteStorage.loadDecodable([Tab1RouteToken].self, forKey: storageKey) {
+        if let tokens = RouteStorage.loadDecodable([Tab1RouteToken].self, forKey: RouterStorageKey.tab1Path) {
             self.path = decode(tokens)
-        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: storageKey) {
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: RouterStorageKey.tab1Path) {
             self.path = legacyDecode(legacy)
-            RouteStorage.saveEncodable(encode(self.path), forKey: storageKey)
+            RouteStorage.saveEncodable(encode(self.path), forKey: RouterStorageKey.tab1Path)
+            RouterLog.logger.info("Migrated legacy tab1 path to Codable format")
+        }
+        logoutObserver = NotificationCenter.default.addObserver(forName: .routerDidLogout, object: nil, queue: .main) { [weak self] _ in
+            self?.clearPersistence()
+        }
+    }
+
+    deinit {
+        if let o = logoutObserver {
+            NotificationCenter.default.removeObserver(o)
         }
     }
 
@@ -219,23 +252,34 @@ final class Tab1Router: Router {
     }
 
     func clearPersistence() {
-        RouteStorage.clear(forKey: storageKey)
+        RouteStorage.clear(forKey: RouterStorageKey.tab1Path)
         self.path = []
     }
 }
 
 final class Tab2Router: Router {
+    private var logoutObserver: Any?
+
     @Published var path: [Tab2Path] = [] {
-        didSet { RouteStorage.saveEncodable(encode(path), forKey: storageKey) }
+        didSet { RouteStorage.saveEncodable(encode(path), forKey: RouterStorageKey.tab2Path) }
     }
-    private let storageKey = "router.tab2.path"
 
     init() {
-        if let tokens = RouteStorage.loadDecodable([Tab2RouteToken].self, forKey: storageKey) {
+        if let tokens = RouteStorage.loadDecodable([Tab2RouteToken].self, forKey: RouterStorageKey.tab2Path) {
             self.path = decode(tokens)
-        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: storageKey) {
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: RouterStorageKey.tab2Path) {
             self.path = legacyDecode(legacy)
-            RouteStorage.saveEncodable(encode(self.path), forKey: storageKey)
+            RouteStorage.saveEncodable(encode(self.path), forKey: RouterStorageKey.tab2Path)
+            RouterLog.logger.info("Migrated legacy tab2 path to Codable format")
+        }
+        logoutObserver = NotificationCenter.default.addObserver(forName: .routerDidLogout, object: nil, queue: .main) { [weak self] _ in
+            self?.clearPersistence()
+        }
+    }
+
+    deinit {
+        if let o = logoutObserver {
+            NotificationCenter.default.removeObserver(o)
         }
     }
 
@@ -326,56 +370,66 @@ final class Tab2Router: Router {
     }
 
     func clearPersistence() {
-        RouteStorage.clear(forKey: storageKey)
+        RouteStorage.clear(forKey: RouterStorageKey.tab2Path)
         self.path = []
     }
 }
 
 final class Tab3Router: Router {
+    private var logoutObserver: Any?
+
     @Published var path: [Tab3Path] = [] {
-        didSet { RouteStorage.saveEncodable(encode(path), forKey: pathKey) }
+        didSet { RouteStorage.saveEncodable(encode(path), forKey: RouterStorageKey.tab3Path) }
     }
     @Published var modal: Tab3Modal? {
         didSet {
             if let modal = modal {
-                RouteStorage.saveEncodable(encode(modal), forKey: modalKey)
+                RouteStorage.saveEncodable(encode(modal), forKey: RouterStorageKey.tab3Modal)
             } else {
-                RouteStorage.clear(forKey: modalKey)
+                RouteStorage.clear(forKey: RouterStorageKey.tab3Modal)
             }
         }
     }
     @Published var fullScreen: Tab3Modal? {
         didSet {
             if let full = fullScreen {
-                RouteStorage.saveEncodable(encode(full), forKey: fullScreenKey)
+                RouteStorage.saveEncodable(encode(full), forKey: RouterStorageKey.tab3FullScreen)
             } else {
-                RouteStorage.clear(forKey: fullScreenKey)
+                RouteStorage.clear(forKey: RouterStorageKey.tab3FullScreen)
             }
         }
     }
 
-    private let pathKey = "router.tab3.path"
-    private let modalKey = "router.tab3.modal"
-    private let fullScreenKey = "router.tab3.fullscreen"
-
     init() {
-        if let tokens = RouteStorage.loadDecodable([Tab3RouteToken].self, forKey: pathKey) {
+        if let tokens = RouteStorage.loadDecodable([Tab3RouteToken].self, forKey: RouterStorageKey.tab3Path) {
             self.path = decode(tokens)
-        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: pathKey) {
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: RouterStorageKey.tab3Path) {
             self.path = legacyDecode(legacy)
-            RouteStorage.saveEncodable(encode(self.path), forKey: pathKey)
+            RouteStorage.saveEncodable(encode(self.path), forKey: RouterStorageKey.tab3Path)
+            RouterLog.logger.info("Migrated legacy tab3 path to Codable format")
         }
-        if let token = RouteStorage.loadDecodable(Tab3ModalToken.self, forKey: modalKey), let m = decodeModal(token) {
+        if let token = RouteStorage.loadDecodable(Tab3ModalToken.self, forKey: RouterStorageKey.tab3Modal), let m = decodeModal(token) {
             self.modal = m
-        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: modalKey)?.first, let m = legacyDecodeModal(legacy) {
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: RouterStorageKey.tab3Modal)?.first, let m = legacyDecodeModal(legacy) {
             self.modal = m
-            RouteStorage.saveEncodable(encode(m), forKey: modalKey)
+            RouteStorage.saveEncodable(encode(m), forKey: RouterStorageKey.tab3Modal)
+            RouterLog.logger.info("Migrated legacy tab3 modal to Codable format")
         }
-        if let token = RouteStorage.loadDecodable(Tab3ModalToken.self, forKey: fullScreenKey), let fs = decodeModal(token) {
+        if let token = RouteStorage.loadDecodable(Tab3ModalToken.self, forKey: RouterStorageKey.tab3FullScreen), let fs = decodeModal(token) {
             self.fullScreen = fs
-        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: fullScreenKey)?.first, let fs = legacyDecodeModal(legacy) {
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: RouterStorageKey.tab3FullScreen)?.first, let fs = legacyDecodeModal(legacy) {
             self.fullScreen = fs
-            RouteStorage.saveEncodable(encode(fs), forKey: fullScreenKey)
+            RouteStorage.saveEncodable(encode(fs), forKey: RouterStorageKey.tab3FullScreen)
+            RouterLog.logger.info("Migrated legacy tab3 fullScreen to Codable format")
+        }
+        logoutObserver = NotificationCenter.default.addObserver(forName: .routerDidLogout, object: nil, queue: .main) { [weak self] _ in
+            self?.clearPersistence()
+        }
+    }
+
+    deinit {
+        if let o = logoutObserver {
+            NotificationCenter.default.removeObserver(o)
         }
     }
 
@@ -526,9 +580,9 @@ final class Tab3Router: Router {
     }
 
     func clearPersistence() {
-        RouteStorage.clear(forKey: pathKey)
-        RouteStorage.clear(forKey: modalKey)
-        RouteStorage.clear(forKey: fullScreenKey)
+        RouteStorage.clear(forKey: RouterStorageKey.tab3Path)
+        RouteStorage.clear(forKey: RouterStorageKey.tab3Modal)
+        RouteStorage.clear(forKey: RouterStorageKey.tab3FullScreen)
         self.path = []
         self.modal = nil
         self.fullScreen = nil
