@@ -2,12 +2,17 @@ import SwiftUI
 
 // Lightweight storage for route tokens
 private enum RouteStorage {
-    static func save(_ tokens: [String], forKey key: String) {
-        UserDefaults.standard.set(tokens, forKey: key)
+    static func saveEncodable<T: Encodable>(_ value: T, forKey key: String) {
+        let encoder = JSONEncoder()
+        if let data = try? encoder.encode(value) {
+            UserDefaults.standard.set(data, forKey: key)
+        }
     }
 
-    static func load(forKey key: String) -> [String]? {
-        UserDefaults.standard.stringArray(forKey: key)
+    static func loadDecodable<T: Decodable>(_ type: T.Type, forKey key: String) -> T? {
+        guard let data = UserDefaults.standard.data(forKey: key) else { return nil }
+        let decoder = JSONDecoder()
+        return try? decoder.decode(T.self, from: data)
     }
 
     static func clear(forKey key: String) {
@@ -26,12 +31,12 @@ protocol Router: ObservableObject {
 
 final class AuthRouter: Router {
     @Published var path: [AuthPath] = [] {
-        didSet { RouteStorage.save(encode(path), forKey: storageKey) }
+        didSet { RouteStorage.saveEncodable(encode(path), forKey: storageKey) }
     }
     private let storageKey = "router.auth.path"
 
     init() {
-        if let tokens = RouteStorage.load(forKey: storageKey) {
+        if let tokens = RouteStorage.loadDecodable([AuthRouteToken].self, forKey: storageKey) {
             self.path = decode(tokens)
         }
     }
@@ -58,34 +63,43 @@ final class AuthRouter: Router {
         path = [route]
     }
 
-    private func encode(_ path: [AuthPath]) -> [String] {
+    private enum AuthRouteToken: String, Codable { case login, validation }
+
+    private func encode(_ path: [AuthPath]) -> [AuthRouteToken] {
         path.map { route in
             switch route {
-            case .login: return "login"
-            case .validation: return "validation"
+            case .login: return .login
+            case .validation: return .validation
             }
         }
     }
 
-    private func decode(_ tokens: [String]) -> [AuthPath] {
-        tokens.compactMap { token in
+    private func decode(_ tokens: [AuthRouteToken]) -> [AuthPath] {
+        tokens.map { token in
             switch token {
-            case "login": return .login
-            case "validation": return .validation
-            default: return nil
+            case .login: return .login
+            case .validation: return .validation
             }
         }
+    }
+
+    func clearPersistence() {
+        RouteStorage.clear(forKey: storageKey)
+        self.path = []
     }
 }
 
 final class Tab1Router: Router {
     @Published var path: [Tab1Path] = [] {
-        didSet { RouteStorage.save(encode(path), forKey: storageKey) }
+        didSet { RouteStorage.saveEncodable(encode(path), forKey: storageKey) }
     }
     private let storageKey = "router.tab1.path"
 
+    static var detailIDExtractor: ((ApiCustomers) -> String)?
+    static var detailResolver: ((String) -> ApiCustomers)?
+
     init() {
-        if let tokens = RouteStorage.load(forKey: storageKey) {
+        if let tokens = RouteStorage.loadDecodable([Tab1RouteToken].self, forKey: storageKey) {
             self.path = decode(tokens)
         }
     }
@@ -132,36 +146,57 @@ final class Tab1Router: Router {
         }
     }
 
-    // Persist only steps we can reliably reconstruct.
-    private func encode(_ path: [Tab1Path]) -> [String] {
+    private enum Tab1RouteToken: Codable {
+        case screen1
+        case screen2
+        case detail(id: String)
+    }
+
+    private func encode(_ path: [Tab1Path]) -> [Tab1RouteToken] {
         path.compactMap { route in
             switch route {
-            case .screen1: return "screen1"
-            case .screen2: return "screen2"
-            case .detail: return nil // Not persisted due to unknown identifier
+            case .screen1: return .screen1
+            case .screen2: return .screen2
+            case .detail(let customer):
+                if let id = Self.detailIDExtractor?(customer) {
+                    return .detail(id: id)
+                } else {
+                    return nil
+                }
             }
         }
     }
 
-    private func decode(_ tokens: [String]) -> [Tab1Path] {
+    private func decode(_ tokens: [Tab1RouteToken]) -> [Tab1Path] {
         tokens.compactMap { token in
             switch token {
-            case "screen1": return .screen1
-            case "screen2": return .screen2
-            default: return nil
+            case .screen1: return .screen1
+            case .screen2: return .screen2
+            case .detail(let id):
+                if let resolver = Self.detailResolver {
+                    return .detail(resolver(id))
+                } else {
+                    // Fallback: without resolver, return to the parent screen.
+                    return .screen2
+                }
             }
         }
+    }
+
+    func clearPersistence() {
+        RouteStorage.clear(forKey: storageKey)
+        self.path = []
     }
 }
 
 final class Tab2Router: Router {
     @Published var path: [Tab2Path] = [] {
-        didSet { RouteStorage.save(encode(path), forKey: storageKey) }
+        didSet { RouteStorage.saveEncodable(encode(path), forKey: storageKey) }
     }
     private let storageKey = "router.tab2.path"
 
     init() {
-        if let tokens = RouteStorage.load(forKey: storageKey) {
+        if let tokens = RouteStorage.loadDecodable([Tab2RouteToken].self, forKey: storageKey) {
             self.path = decode(tokens)
         }
     }
@@ -210,39 +245,49 @@ final class Tab2Router: Router {
         }
     }
 
-    private func encode(_ path: [Tab2Path]) -> [String] {
+    private enum Tab2RouteToken: Codable {
+        case screen1
+        case screen2
+        case screen2Detail(id: String)
+        case screen3
+    }
+
+    private func encode(_ path: [Tab2Path]) -> [Tab2RouteToken] {
         path.map { route in
             switch route {
-            case .screen1: return "screen1"
-            case .screen2: return "screen2"
-            case .screen2Detail(let id): return "screen2Detail:\(id)"
-            case .screen3: return "screen3"
+            case .screen1: return .screen1
+            case .screen2: return .screen2
+            case .screen2Detail(let id): return .screen2Detail(id: id)
+            case .screen3: return .screen3
             }
         }
     }
 
-    private func decode(_ tokens: [String]) -> [Tab2Path] {
-        tokens.compactMap { token in
-            if token == "screen1" { return .screen1 }
-            if token == "screen2" { return .screen2 }
-            if token == "screen3" { return .screen3 }
-            if token.hasPrefix("screen2Detail:") {
-                let id = String(token.dropFirst("screen2Detail:".count))
-                return .screen2Detail(id)
+    private func decode(_ tokens: [Tab2RouteToken]) -> [Tab2Path] {
+        tokens.map { token in
+            switch token {
+            case .screen1: return .screen1
+            case .screen2: return .screen2
+            case .screen2Detail(let id): return .screen2Detail(id)
+            case .screen3: return .screen3
             }
-            return nil
         }
+    }
+
+    func clearPersistence() {
+        RouteStorage.clear(forKey: storageKey)
+        self.path = []
     }
 }
 
 final class Tab3Router: Router {
     @Published var path: [Tab3Path] = [] {
-        didSet { RouteStorage.save(encode(path), forKey: pathKey) }
+        didSet { RouteStorage.saveEncodable(encode(path), forKey: pathKey) }
     }
     @Published var modal: Tab3Modal? {
         didSet {
             if let modal = modal {
-                RouteStorage.save([encode(modal)], forKey: modalKey)
+                RouteStorage.saveEncodable(encode(modal), forKey: modalKey)
             } else {
                 RouteStorage.clear(forKey: modalKey)
             }
@@ -251,7 +296,7 @@ final class Tab3Router: Router {
     @Published var fullScreen: Tab3Modal? {
         didSet {
             if let full = fullScreen {
-                RouteStorage.save([encode(full)], forKey: fullScreenKey)
+                RouteStorage.saveEncodable(encode(full), forKey: fullScreenKey)
             } else {
                 RouteStorage.clear(forKey: fullScreenKey)
             }
@@ -263,13 +308,13 @@ final class Tab3Router: Router {
     private let fullScreenKey = "router.tab3.fullscreen"
 
     init() {
-        if let tokens = RouteStorage.load(forKey: pathKey) {
+        if let tokens = RouteStorage.loadDecodable([Tab3RouteToken].self, forKey: pathKey) {
             self.path = decode(tokens)
         }
-        if let tokens = RouteStorage.load(forKey: modalKey), let first = tokens.first, let m = decodeModal(first) {
+        if let token = RouteStorage.loadDecodable(Tab3ModalToken.self, forKey: modalKey), let m = decodeModal(token) {
             self.modal = m
         }
-        if let tokens = RouteStorage.load(forKey: fullScreenKey), let first = tokens.first, let fs = decodeModal(first) {
+        if let token = RouteStorage.loadDecodable(Tab3ModalToken.self, forKey: fullScreenKey), let fs = decodeModal(token) {
             self.fullScreen = fs
         }
     }
@@ -332,57 +377,70 @@ final class Tab3Router: Router {
         }
     }
 
-    private func encode(_ path: [Tab3Path]) -> [String] {
+    private enum Tab3RouteToken: Codable {
+        case screen1
+        case screen2
+        case screen2Detail(id: String)
+        case screen2Edit(id: String)
+        case screen3
+        case screen4
+        case screen5
+        case screen6
+    }
+
+    private enum Tab3ModalToken: String, Codable { case createItem, filter }
+
+    private func encode(_ path: [Tab3Path]) -> [Tab3RouteToken] {
         path.map { route in
             switch route {
-            case .screen1: return "screen1"
-            case .screen2: return "screen2"
-            case .screen2Detail(let id): return "screen2Detail:\(id)"
-            case .screen2Edit(let id): return "screen2Edit:\(id)"
-            case .screen3: return "screen3"
-            case .screen4: return "screen4"
-            case .screen5: return "screen5"
-            case .screen6: return "screen6"
+            case .screen1: return .screen1
+            case .screen2: return .screen2
+            case .screen2Detail(let id): return .screen2Detail(id: id)
+            case .screen2Edit(let id): return .screen2Edit(id: id)
+            case .screen3: return .screen3
+            case .screen4: return .screen4
+            case .screen5: return .screen5
+            case .screen6: return .screen6
             }
         }
     }
 
-    private func decode(_ tokens: [String]) -> [Tab3Path] {
-        tokens.compactMap { token in
+    private func decode(_ tokens: [Tab3RouteToken]) -> [Tab3Path] {
+        tokens.map { token in
             switch token {
-            case "screen1": return .screen1
-            case "screen2": return .screen2
-            case "screen3": return .screen3
-            case "screen4": return .screen4
-            case "screen5": return .screen5
-            case "screen6": return .screen6
-            default:
-                if token.hasPrefix("screen2Detail:") {
-                    let id = String(token.dropFirst("screen2Detail:".count))
-                    return .screen2Detail(id)
-                }
-                if token.hasPrefix("screen2Edit:") {
-                    let id = String(token.dropFirst("screen2Edit:".count))
-                    return .screen2Edit(id)
-                }
-                return nil
+            case .screen1: return .screen1
+            case .screen2: return .screen2
+            case .screen2Detail(let id): return .screen2Detail(id)
+            case .screen2Edit(let id): return .screen2Edit(id)
+            case .screen3: return .screen3
+            case .screen4: return .screen4
+            case .screen5: return .screen5
+            case .screen6: return .screen6
             }
         }
     }
 
-    private func encode(_ modal: Tab3Modal) -> String {
+    private func encode(_ modal: Tab3Modal) -> Tab3ModalToken {
         switch modal {
-        case .createItem: return "createItem"
-        case .filter: return "filter"
+        case .createItem: return .createItem
+        case .filter: return .filter
         }
     }
 
-    private func decodeModal(_ token: String) -> Tab3Modal? {
+    private func decodeModal(_ token: Tab3ModalToken) -> Tab3Modal? {
         switch token {
-        case "createItem": return .createItem
-        case "filter": return .filter
-        default: return nil
+        case .createItem: return .createItem
+        case .filter: return .filter
         }
+    }
+
+    func clearPersistence() {
+        RouteStorage.clear(forKey: pathKey)
+        RouteStorage.clear(forKey: modalKey)
+        RouteStorage.clear(forKey: fullScreenKey)
+        self.path = []
+        self.modal = nil
+        self.fullScreen = nil
     }
 }
 
