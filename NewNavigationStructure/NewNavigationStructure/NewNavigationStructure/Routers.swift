@@ -15,6 +15,11 @@ private enum RouteStorage {
         return try? decoder.decode(T.self, from: data)
     }
 
+    // Legacy support: load previously stored string tokens
+    static func loadLegacyStrings(forKey key: String) -> [String]? {
+        UserDefaults.standard.stringArray(forKey: key)
+    }
+
     static func clear(forKey key: String) {
         UserDefaults.standard.removeObject(forKey: key)
     }
@@ -38,6 +43,8 @@ final class AuthRouter: Router {
     init() {
         if let tokens = RouteStorage.loadDecodable([AuthRouteToken].self, forKey: storageKey) {
             self.path = decode(tokens)
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: storageKey) {
+            self.path = legacyDecode(legacy)
         }
     }
 
@@ -83,6 +90,16 @@ final class AuthRouter: Router {
         }
     }
 
+    private func legacyDecode(_ tokens: [String]) -> [AuthPath] {
+        tokens.compactMap { token in
+            switch token {
+            case "login": return .login
+            case "validation": return .validation
+            default: return nil
+            }
+        }
+    }
+
     func clearPersistence() {
         RouteStorage.clear(forKey: storageKey)
         self.path = []
@@ -90,17 +107,23 @@ final class AuthRouter: Router {
 }
 
 final class Tab1Router: Router {
+    // Provide hooks to extract a stable ID from ApiCustomers and resolve it back.
+    // Example:
+    // Tab1Router.detailIDExtractor = { $0.id }
+    // Tab1Router.detailResolver = { id in ApiCustomers(id: id, ...) }
+    static var detailIDExtractor: ((ApiCustomers) -> String)?
+    static var detailResolver: ((String) -> ApiCustomers)?
+
     @Published var path: [Tab1Path] = [] {
         didSet { RouteStorage.saveEncodable(encode(path), forKey: storageKey) }
     }
     private let storageKey = "router.tab1.path"
 
-    static var detailIDExtractor: ((ApiCustomers) -> String)?
-    static var detailResolver: ((String) -> ApiCustomers)?
-
     init() {
         if let tokens = RouteStorage.loadDecodable([Tab1RouteToken].self, forKey: storageKey) {
             self.path = decode(tokens)
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: storageKey) {
+            self.path = legacyDecode(legacy)
         }
     }
 
@@ -183,6 +206,16 @@ final class Tab1Router: Router {
         }
     }
 
+    private func legacyDecode(_ tokens: [String]) -> [Tab1Path] {
+        tokens.compactMap { token in
+            switch token {
+            case "screen1": return .screen1
+            case "screen2": return .screen2
+            default: return nil
+            }
+        }
+    }
+
     func clearPersistence() {
         RouteStorage.clear(forKey: storageKey)
         self.path = []
@@ -198,6 +231,8 @@ final class Tab2Router: Router {
     init() {
         if let tokens = RouteStorage.loadDecodable([Tab2RouteToken].self, forKey: storageKey) {
             self.path = decode(tokens)
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: storageKey) {
+            self.path = legacyDecode(legacy)
         }
     }
 
@@ -274,6 +309,19 @@ final class Tab2Router: Router {
         }
     }
 
+    private func legacyDecode(_ tokens: [String]) -> [Tab2Path] {
+        tokens.compactMap { token in
+            if token == "screen1" { return .screen1 }
+            if token == "screen2" { return .screen2 }
+            if token == "screen3" { return .screen3 }
+            if token.hasPrefix("screen2Detail:") {
+                let id = String(token.dropFirst("screen2Detail:".count))
+                return .screen2Detail(id)
+            }
+            return nil
+        }
+    }
+
     func clearPersistence() {
         RouteStorage.clear(forKey: storageKey)
         self.path = []
@@ -310,11 +358,17 @@ final class Tab3Router: Router {
     init() {
         if let tokens = RouteStorage.loadDecodable([Tab3RouteToken].self, forKey: pathKey) {
             self.path = decode(tokens)
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: pathKey) {
+            self.path = legacyDecode(legacy)
         }
         if let token = RouteStorage.loadDecodable(Tab3ModalToken.self, forKey: modalKey), let m = decodeModal(token) {
             self.modal = m
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: modalKey)?.first, let m = legacyDecodeModal(legacy) {
+            self.modal = m
         }
         if let token = RouteStorage.loadDecodable(Tab3ModalToken.self, forKey: fullScreenKey), let fs = decodeModal(token) {
+            self.fullScreen = fs
+        } else if let legacy = RouteStorage.loadLegacyStrings(forKey: fullScreenKey)?.first, let fs = legacyDecodeModal(legacy) {
             self.fullScreen = fs
         }
     }
@@ -434,6 +488,37 @@ final class Tab3Router: Router {
         }
     }
 
+    private func legacyDecode(_ tokens: [String]) -> [Tab3Path] {
+        tokens.compactMap { token in
+            switch token {
+            case "screen1": return .screen1
+            case "screen2": return .screen2
+            case "screen3": return .screen3
+            case "screen4": return .screen4
+            case "screen5": return .screen5
+            case "screen6": return .screen6
+            default:
+                if token.hasPrefix("screen2Detail:") {
+                    let id = String(token.dropFirst("screen2Detail:".count))
+                    return .screen2Detail(id)
+                }
+                if token.hasPrefix("screen2Edit:") {
+                    let id = String(token.dropFirst("screen2Edit:".count))
+                    return .screen2Edit(id)
+                }
+                return nil
+            }
+        }
+    }
+
+    private func legacyDecodeModal(_ token: String) -> Tab3Modal? {
+        switch token {
+        case "createItem": return .createItem
+        case "filter": return .filter
+        default: return nil
+        }
+    }
+
     func clearPersistence() {
         RouteStorage.clear(forKey: pathKey)
         RouteStorage.clear(forKey: modalKey)
@@ -494,3 +579,4 @@ enum Tab3Path: Hashable {
     case screen5
     case screen6
 }
+
