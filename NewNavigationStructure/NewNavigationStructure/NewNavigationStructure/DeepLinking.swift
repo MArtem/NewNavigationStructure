@@ -16,28 +16,28 @@ protocol DeepLinkServiceProtocol {
 
 final class DeepLinkService: DeepLinkServiceProtocol {
     func processDeepLink(_ url: URL, coordinator: AppCoordinator) -> Bool {
-        guard url.scheme == "myapp",
+        guard url.scheme?.lowercased() == "myapp",
               let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
               let host = components.host else {
             return false
         }
-        let pathComponents = url.pathComponents.dropFirst().map { String($0) }
+        let pathComponents = url.pathComponents.dropFirst().map { String($0).lowercased() }
         let queryParams = url.queryParameters
-        switch host {
+        switch host.lowercased() {
         case "tab1":
             if pathComponents.contains("screen2") {
                 coordinator.navigateToTabScreen(tab: 0, path: [Tab1Path.screen2])
             } else if pathComponents.contains("screen1") {
                 coordinator.navigateToTabScreen(tab: 0, path: [Tab1Path.screen1])
             } else if pathComponents.contains("detail"),
-                      pathComponents.count > 1,
-                      let id = Int(pathComponents[1]),
-                      let customer = try? coordinator.storeManager.fetchCustomers().first(where: { $0.id == id }) {
+                      let id = deepLinkID(pathComponents: pathComponents, queryParams: queryParams),
+                      let customerId = Int(id),
+                      let customer = try? coordinator.storeManager.fetchCustomers().first(where: { $0.id == customerId }) {
                 coordinator.navigateToTabScreen(tab: 0, path: [Tab1Path.screen2, .detail(customer)])
             } else { return false }
             return true
         case "tab2":
-            if pathComponents.contains("screen2detail"), let id = queryParams["id"] {
+            if pathComponents.contains("screen2detail"), let id = deepLinkID(pathComponents: pathComponents, queryParams: queryParams) {
                 coordinator.navigateToTabScreen(tab: 1, path: [Tab2Path.screen1, Tab2Path.screen2, Tab2Path.screen2Detail(id)])
             } else if pathComponents.contains("screen3") {
                 coordinator.navigateToTabScreen(tab: 1, path: [Tab2Path.screen1, Tab2Path.screen2, Tab2Path.screen3])
@@ -52,9 +52,9 @@ final class DeepLinkService: DeepLinkServiceProtocol {
                 coordinator.navigateToTabScreen(tab: 2, path: [Tab3Path.screen1, Tab3Path.screen2, Tab3Path.screen3, Tab3Path.screen4])
             } else if pathComponents.contains("screen3") {
                 coordinator.navigateToTabScreen(tab: 2, path: [Tab3Path.screen1, Tab3Path.screen2, Tab3Path.screen3])
-            } else if pathComponents.contains("screen2edit"), let id = queryParams["id"] {
+            } else if pathComponents.contains("screen2edit"), let id = deepLinkID(pathComponents: pathComponents, queryParams: queryParams) {
                 coordinator.navigateToTabScreen(tab: 2, path: [Tab3Path.screen1, Tab3Path.screen2, Tab3Path.screen2Detail(id), Tab3Path.screen2Edit(id)])
-            } else if pathComponents.contains("screen2detail"), let id = queryParams["id"] {
+            } else if pathComponents.contains("screen2detail"), let id = deepLinkID(pathComponents: pathComponents, queryParams: queryParams) {
                 coordinator.navigateToTabScreen(tab: 2, path: [Tab3Path.screen1, Tab3Path.screen2, Tab3Path.screen2Detail(id)])
             } else if pathComponents.contains("screen2") {
                 coordinator.navigateToTabScreen(tab: 2, path: [Tab3Path.screen1, Tab3Path.screen2])
@@ -65,6 +65,22 @@ final class DeepLinkService: DeepLinkServiceProtocol {
         default:
             return false
         }
+    }
+
+    private func deepLinkID(pathComponents: [String], queryParams: [String: String]) -> String? {
+        if let queryID = queryParams["id"], !queryID.isEmpty {
+            return queryID
+        }
+
+        guard let lastPathComponent = pathComponents.last,
+              !lastPathComponent.isEmpty,
+              lastPathComponent != "screen2detail",
+              lastPathComponent != "screen2edit",
+              lastPathComponent != "detail" else {
+            return nil
+        }
+
+        return lastPathComponent
     }
 }
 

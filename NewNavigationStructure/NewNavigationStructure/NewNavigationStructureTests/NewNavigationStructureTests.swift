@@ -106,6 +106,37 @@ struct NewNavigationStructureTests {
         #expect(router.path.isEmpty)
     }
 
+
+
+    @Test("DeepLinkService accepts case-insensitive scheme/host and supports path id fallback")
+    func deepLinkServiceCaseInsensitiveAndPathIDFallback() async throws {
+        clearAllRouterKeys()
+
+        let persistence = PersistenceController(inMemory: true)
+        let context = persistence.container.viewContext
+        let storeManager = StoreManager(
+            userService: UserDatabaseService(context: context),
+            contentService: ContentDatabaseService(context: context)
+        )
+        let coordinator = AppCoordinator(storeManager: storeManager)
+        let service = DeepLinkService()
+
+        let tab2Handled = service.processDeepLink(
+            try #require(URL(string: "MYAPP://TAB2/screen2detail/abc123")),
+            coordinator: coordinator
+        )
+        #expect(tab2Handled == true)
+        #expect(coordinator.selectedTab == 1)
+        #expect(coordinator.tab2Router.path == [.screen1, .screen2, .screen2Detail("abc123")])
+
+        let tab3Handled = service.processDeepLink(
+            try #require(URL(string: "myapp://tab3/screen2edit/path-id-42")),
+            coordinator: coordinator
+        )
+        #expect(tab3Handled == true)
+        #expect(coordinator.selectedTab == 2)
+        #expect(coordinator.tab3Router.path == [.screen1, .screen2, .screen2Detail("path-id-42"), .screen2Edit("path-id-42")])
+    }
     @Test("Tab1Router decodes detail token without resolver as fallback to screen2")
     func tab1RouterDetailFallbackWithoutResolver() async throws {
         clearAllRouterKeys()
